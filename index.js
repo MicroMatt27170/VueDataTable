@@ -1,6 +1,14 @@
 import Swal from 'sweetalert2'
+import { Toast } from '~/plugins/sweet-alert2'
+import axios from "axios"
 
-export async function HandleElementDelete({endpoint, title = 'Eliminar elemento', text = '¿Seguro que desea eliminar el elemento?', confirmBtnText = 'Eliminar', cancelBtnText = 'Cancelar'}) {
+export async function HandleElementDelete({
+                                            endpoint,
+                                            title = 'Eliminar elemento'
+                                            , text = '¿Seguro que desea eliminar el elemento?',
+                                            confirmBtnText = 'Eliminar',
+                                            cancelBtnText = 'Cancelar',
+                                            _axios = axios}) {
     const result = await Swal.fire({
       title: title,
       text: text,
@@ -13,7 +21,7 @@ export async function HandleElementDelete({endpoint, title = 'Eliminar elemento'
       customClass: {
         confirmButton: 'btn btn-primary',
         cancelButton: 'btn btn-link'
-      }
+      },
     })
 
     if (result.isDismissed || result.isDenied || !result.isConfirmed) {
@@ -21,13 +29,13 @@ export async function HandleElementDelete({endpoint, title = 'Eliminar elemento'
     }
 
     try {
-      const response = await this.$axios({
+
+      const response = await _axios({
         method: 'delete',
-        baseURL: process.env.NUXT_ENV_SERVER_API_URL,
         url: endpoint
       })
 
-      await Toast.fire({
+      Toast.fire({
         icon: 'success',
         title: response.data.message
       })
@@ -46,11 +54,10 @@ export async function HandleElementDelete({endpoint, title = 'Eliminar elemento'
             }
         }
 
-        await Toast.fire({
+        Toast.fire({
             icon: 'error',
             title: msg
-      })
-
+        })
       return false;
     }
   }

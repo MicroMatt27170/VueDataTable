@@ -1,6 +1,6 @@
 {
   "name": "@matthew27170/datatable",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Datatable for Softalleys Apps",
   "main": "index.js",
   "private": false,
@@ -16,7 +16,8 @@
   "author": "Matthew Montes de Oca",
   "license": "ISC",
   "dependencies": {
-    "sweetalert2": "^11.4.18"
+    "sweetalert2": "^11.4.18",
+    "axios": "0.27.2"
   },
   "repository": {
     "type": "git",
