@@ -35,12 +35,20 @@ export async function HandleElementDelete({endpoint, title = 'Eliminar elemento'
       return true;
 
     } catch (err) {
-      await Toast.fire({
-        icon: 'error',
-        title:
-          err?.response?.data?.message ??
-          err?.message ??
-          'Unexpected error occurred.'
+        let msg = 'Unexpected error occurred.'
+
+        if (err != null && err != undefined) {
+            if (err.response != null && err.response != undefined && err.response.data != null && err.response.data != undefined && err.response.data.message) {
+                msg = err.response.data.message
+            }
+            else if (err.message) {
+                msg = err.response.data.message
+            }
+        }
+
+        await Toast.fire({
+            icon: 'error',
+            title: msg
       })
 
       return false;
