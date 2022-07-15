@@ -42,7 +42,7 @@ export async function HandleElementDelete({endpoint, title = 'Eliminar elemento'
                 msg = err.response.data.message
             }
             else if (err.message) {
-                msg = err.response.data.message
+                msg = err.message
             }
         }
 
