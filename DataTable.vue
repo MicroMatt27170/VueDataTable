@@ -17,7 +17,7 @@
                 <span v-if='col.sortable' style='cursor: context-menu'
                       @click='orderColumn(col.key)'>
                   <i class='material-icons-outlined mdc-18'>
-                    {{ orderBy !== col.key ? '&#xe164;' : (orderDir === 'desc' ? '&#xe5db;' : '&#xe5d8;') }}
+                    {{ orderByModel !== col.key ? '&#xe164;' : (orderDirModel === 'desc' ? '&#xe5db;' : '&#xe5d8;') }}
                   </i>
                   {{ col.label }}
                 </span>
@@ -79,11 +79,11 @@ export default {
       type: Number
     },
     orderBy: {
-      default: 'created_at',
+      default: null,
       type: String
     },
     orderDir: {
-      default: 'desc',
+      default: null,
       type: String
     },
     search: {
@@ -120,25 +120,43 @@ export default {
         {
           url: null, label: '', active: false
         }
-      ]
+      ],
+      model_search: '',
+      model_order_by: 'created_at',
+      model_order_dir: 'desc'
     }
   },
   computed: {
     searchModel: {
-      get() { return this.search },
-      set(s) { this.$emit('update:search', s); }
+      get() {
+        return this.search ?? this.model_search
+      },
+      set(s) {
+        this.model_search = s
+        this.$emit('update:search', s);
+      }
     },
     limitModel: {
       get() { return this.limit },
       set(x) { this.$emit('update:limit', x) }
     },
     orderByModel: {
-      get() { return this.orderBy },
-      set(x) { this.$emit('update:orderBy', x) }
+      get() {
+        return this.orderBy ?? this.model_order_by
+      },
+      set(x) {
+        this.model_order_by = x
+        this.$emit('update:orderBy', x)
+      }
     },
     orderDirModel: {
-      get() { return this.orderDir },
-      set(x) { this.$emit('update:orderDir', x) }
+      get() {
+        return this.orderDir ?? this.model_order_dir
+      },
+      set(x) {
+        this.model_order_dir = x
+        this.$emit('update:orderDir', x)
+      }
     },
     tableClass() {
       return [
@@ -153,13 +171,13 @@ export default {
     limit(val) {
       this.fetchDataTable()
     },
-    search(val) {
+    model_search(val) {
       this.fetchDataTable()
     },
-    orderBy(val) {
+    model_order_by(val) {
       this.fetchDataTable()
     },
-    orderDir(val) {
+    model_order_dir(val) {
       this.fetchDataTable()
     },
     currentPage(val) {
@@ -178,8 +196,8 @@ export default {
       })
     },
     orderColumn(col){
-      if (this.orderBy === col) {
-        this.orderDirModel = this.orderDir === 'desc' ? 'asc' : 'desc'
+      if (this.orderByModel === col) {
+        this.orderDirModel = this.orderDirModel === 'desc' ? 'asc' : 'desc'
       } else {
         this.orderByModel = col
       }
@@ -194,13 +212,13 @@ export default {
     async fetchDataTable() {
       const params = {
         page: this.currentPage,
-        order_by: this.orderBy,
-        order_dir: this.orderDir,
+        order_by: this.orderByModel,
+        order_dir: this.orderDirModel,
         ...this.extraParams
       }
 
       if (this.searchModel) {
-        params.search_query = this.search
+        params.search_query = this.searchModel
       }
 
       return await this.$axios({

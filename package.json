@@ -1,6 +1,6 @@
 {
   "name": "@matthew27170/datatable",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Datatable for Softalleys Apps",
   "main": "index.js",
   "private": false,
@@ -25,5 +25,5 @@
   "bugs": {
     "url": "https://github.com/MicroMatt27170/VueDataTable/issues"
   },
-  "homepage": "https://github.com/MicroMatt27170/VueDataTable#readme"
+  "homepage": "https://github.com/MicroMatt27170/VueDataTable#readme",
 }
