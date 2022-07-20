@@ -1,6 +1,7 @@
 import Swal from 'sweetalert2'
 import { Toast } from '~/plugins/sweet-alert2'
 import axios from "axios"
+import DataTable from "./DataTable"
 
 export async function HandleElementDelete({
                                             endpoint,
@@ -61,3 +62,5 @@ export async function HandleElementDelete({
       return false;
     }
   }
+
+export  { DataTable }

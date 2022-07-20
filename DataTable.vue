@@ -26,7 +26,7 @@
             </tr>
             </thead>
             <tbody>
-            <tr v-for='(data, data_index) in dataset' :key='data_index'>
+            <tr v-for='(data, data_index) in dataset' :key='data_index' :class="setRowClass(data)">
               <td v-for='(col, col_index) in columns' :key='col_index'>
                 <slot :name="'column('+col.key+')'" :cell='data[col.key]' :row='data'>
                   <span v-if='col.asLocalTime'>{{ datetimeToLocalString(data[col.key]) }}</span>
@@ -101,6 +101,10 @@ export default {
     small: {
       default: false,
       type: Boolean
+    },
+    onRowClass: {
+      default: null,
+      type: Function
     }
   },
   data() {
@@ -188,6 +192,10 @@ export default {
     this.fetchDataTable()
   },
   methods: {
+    setRowClass(row) {
+      if (this.onRowClass === null) return ''
+      else return this.onRowClass(row)
+    },
     changeData(keyCol, keyValue, col, value) {
       this.dataset.forEach((row, ind) => {
         if (row[keyCol] === keyValue) {
