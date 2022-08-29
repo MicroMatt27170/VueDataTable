@@ -2,7 +2,7 @@
   <div class='row mb-3'>
     <div class='col-md-12'>
       <div class='card card-outline'>
-        <div class='card-body'>
+        <div :class='cardBodyClassComputed'>
           <div class='mb-3 d-flex flex-row'>
             <label class='form-label mt-3 me-3'>Búsqueda</label>
             <input v-model.lazy='searchModel'
@@ -105,6 +105,10 @@ export default {
     onRowClass: {
       default: null,
       type: Function
+    },
+    cardBodyClass: {
+      default: () => { return [] },
+      type: Array
     }
   },
   data() {
@@ -169,6 +173,9 @@ export default {
         'table-borderless',
         this.small ? 'table-sm': ''
       ]
+    },
+    cardBodyClassComputed() {
+      return ['card-body'].concat(this.cardBodyClass)
     }
   },
   watch: {

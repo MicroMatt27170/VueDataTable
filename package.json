@@ -1,6 +1,6 @@
 {
   "name": "@matthew27170/datatable",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Datatable for Softalleys Apps",
   "main": "index.js",
   "private": false,
