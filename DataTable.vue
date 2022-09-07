@@ -50,6 +50,14 @@
                         v-text='link.label'/>
               </li>
             </ul>
+
+            <li class='mt-1 ms-3'>
+                    <span class='subtitle-2 text-muted'>
+                      Página {{ currentPage }} de
+                      {{ lastPage }} con
+                      {{ total }} registros
+                    </span>
+              </li>
           </nav>
 
         </div>
@@ -183,6 +191,7 @@ export default {
       this.fetchDataTable()
     },
     model_search(val) {
+      this.currentPage = 1
       this.fetchDataTable()
     },
     model_order_by(val) {
