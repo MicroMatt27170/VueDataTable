@@ -220,8 +220,14 @@ export default {
     getPageFromUrl(url) {
       const baseUrl = this.endpoint
       const search = url.split(baseUrl)
-
+      
       const params = new URLSearchParams(search[1])
+      if (params.get('page') == null) {
+        const page = url.split('page=')
+        if (page.length > 0) {
+          return parseInt(page[page.length - 1] ?? 1)
+        }
+      }
       return parseInt(params.get('page') ?? 1)
     },
     async fetchDataTable() {
