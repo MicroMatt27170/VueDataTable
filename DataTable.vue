@@ -3,17 +3,21 @@
     <div class='col-md-12'>
       <div class='card card-outline'>
         <div :class='cardBodyClassComputed'>
-          <div class='mb-3 d-flex flex-row'>
-            <label class='form-label mt-3 me-3'>Búsqueda</label>
-            <input v-model.lazy='searchModel'
-                   class='form-control'
-                   type='search'
-                   style='max-width: 600px;'>
+          <div class='mb-3'>
+            <slot name="search">
+              <div class="d-flex flex-row">
+                <label class='form-label mt-3 me-3'>Búsqueda</label>
+                <input v-model='searchModel'
+                       class='form-control'
+                       type='search'
+                       style='max-width: 600px;'>
+              </div>
+            </slot>
           </div>
           <table :class='tableClass'>
             <thead>
             <tr>
-              <th v-for='col in columns' :key=col.key>
+              <th v-for='col in columns.filter(c => c.hide !== false)' :key=col.key>
                 <span v-if='col.sortable' style='cursor: context-menu'
                       @click='orderColumn(col.key)'>
                   <i class='material-icons-outlined mdc-18'>
@@ -68,6 +72,7 @@
 
 <script>
 import { Toast } from '~/plugins/sweet-alert2'
+import objectToQueryParams from './objectToQueryParams'
 
 export default {
   name: 'DataTable',
@@ -117,6 +122,10 @@ export default {
     cardBodyClass: {
       default: () => { return [] },
       type: Array
+    },
+    searchTimeoutOffset: {
+      default: 1250,
+      type: Number
     }
   },
   data() {
@@ -137,7 +146,8 @@ export default {
           url: null, label: '', active: false
         }
       ],
-      model_search: '',
+      search_timeout: null,
+      model_search: this.search ?? '',
       model_order_by: 'created_at',
       model_order_dir: 'desc'
     }
@@ -148,8 +158,11 @@ export default {
         return this.search ?? this.model_search
       },
       set(s) {
-        this.model_search = s
-        this.$emit('update:search', s);
+        clearTimeout(this.search_timeout);
+        this.search_timeout = setTimeout( () => {
+          this.model_search = s
+          this.$emit('update:search', s);
+        }, this.searchTimeoutOffset)
       }
     },
     limitModel: {
@@ -202,6 +215,9 @@ export default {
     },
     currentPage(val) {
       this.fetchDataTable()
+    },
+    extraParams(val) {
+      this.fetchDataTable()
     }
   },
   mounted() {
@@ -229,7 +245,7 @@ export default {
     getPageFromUrl(url) {
       const baseUrl = this.endpoint
       const search = url.split(baseUrl)
-      
+
       const params = new URLSearchParams(search[1])
       if (params.get('page') == null) {
         const page = url.split('page=')
@@ -251,11 +267,30 @@ export default {
         params.search_query = this.searchModel
       }
 
+      this.columns.forEach(c => {
+        if (c.where) {
+          if (params.where === undefined) params.where = {}
+
+          console.log(params, c.key)
+          if (c.where === '*') params.where[c.key] = this.searchModel
+          else if (c.where === '%*') params.where[c.key] = '%'+this.searchModel
+          else if (c.where === '%*%') params.where[c.key] = '%'+this.searchModel+'%'
+          else if (c.where.value === '*') params.where[c.key] = Object.assign({}, params.where, { value: this.searchModel })
+          else if (c.where.value === '%*') params.where[c.key] = Object.assign({}, params.where, { value: '%'+this.searchModel })
+          else if (c.where.value === '%*%') params.where[c.key] = Object.assign({}, params.where, { value: '%'+this.searchModel+'%' })
+        }
+      })
+
+      let urlParams = objectToQueryParams(params)
+
+
+      console.log(urlParams.toString())
+
       return await this.$axios({
         method: 'get',
         // baseURL: process.env.NUXT_ENV_SERVER_API_URL,
         url: this.endpoint,
-        params
+        params: urlParams
       })
         .then(response => response.data)
         .then(responseData => {
@@ -291,7 +326,7 @@ export default {
       } catch (e) {
         return null
       }
-    }
+    },
   }
 }
 </script>
