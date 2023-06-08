@@ -166,6 +166,7 @@
 
 <script>
 import { Toast } from '~/plugins/sweet-alert2'
+import objectToQueryParams from './objectToQueryParams'
 
 export default {
   name: 'DataTable',

@@ -64,3 +64,5 @@ export async function HandleElementDelete({
   }
 
 export  { DataTable }
+
+export default DataTable
